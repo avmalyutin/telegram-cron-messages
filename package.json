@@ -1,0 +1,23 @@
+{
+  "name": "telegram-cron-messages-js-bot",
+  "version": "0.0.1",
+  "description": "The simple bot for Telegram to execute schedules cron messages",
+  "main": "main.js",
+  "dependencies": {
+    "cron": "^1.3.0",
+    "node-schedule": "^1.3.0",
+    "sqlite3": "^4.0.0",
+    "telegraf": "^3.21.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "cron"
+  ],
+  "author": "Oleksandr Malyutin <avmalyutin@gmail.com>",
+  "license": "MIT"
+}
