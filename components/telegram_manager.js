@@ -1,28 +1,43 @@
 /** This will handle telegram functionality */
+require('dotenv').config();
 const Telegraf = require("telegraf");
 const cronManager = require("./cron_manager");
 
 const db_manager = require("./db_manager");
 
-const TOKEN = "YOUR_TOKEN_HERE";
-const bot = new Telegraf(TOKEN);
+var TELEGRAM_TOKEN;
+var bot;
 
 var currenCronMessages = {};
 
-bot.start(ctx => ctx.reply("Welcome to the cron messagers bot!"));
-bot.command("/add_cron", ctx => addCronMessage(ctx));
-bot.command("/delete_cron", ctx => deleteCronMessage(ctx));
-bot.command("/get_crons", ctx => getRegisteredCronMessages(ctx));
-// just for debugging
-bot.hears("hi", ctx => ctx.reply("Hey there"));
-
 exports.init = () => {
   console.log("tele_manager: +init");
+  registerBot();
   cronManager.registerBotLink(bot);
   cronManager.registerCronsByStartup();
-  bot.startPolling();
   console.log("tele_manager: -init");
 };
+
+function registerBot() {
+
+  try {
+    TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
+    console.log("TELEGRAM_TOKEN is: " + TELEGRAM_TOKEN);
+    bot = new Telegraf(TELEGRAM_TOKEN);
+    bot.start(ctx => ctx.reply("Welcome to the cron messagers bot!"));
+    bot.command("/add_cron", ctx => addCronMessage(ctx));
+    bot.command("/delete_cron", ctx => deleteCronMessage(ctx));
+    bot.command("/get_crons", ctx => getRegisteredCronMessages(ctx));
+    // just for debugging
+    bot.hears("hi", ctx => ctx.reply("Hey there"));
+    bot.startPolling();
+  } catch (e) {
+    console.log("Error registring the the telegram bot -> exit with code 225");
+    console.log(e);
+    process.exit(225);
+  }
+
+}
 
 function addCronMessage(ctx) {
   console.log("+addCronMessage: " + JSON.stringify(ctx.message));
@@ -51,18 +66,8 @@ function addCronMessage(ctx) {
 }
 
 function deleteCronMessage(ctx) {
-
-  // parse the values here
-
-
   cronManager
     .removeRegisteredMessage(ctx);
-
-
-
-
-
-
 }
 
 function getRegisteredCronMessages(ctx) {

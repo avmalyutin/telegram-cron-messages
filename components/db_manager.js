@@ -21,11 +21,6 @@ exports.init = () => {
 
       // check and create the table
 
-      
-
-
-
-
       return resolve();
     };
 

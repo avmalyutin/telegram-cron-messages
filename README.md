@@ -13,29 +13,33 @@ The bot is written in JavaScript:
 3. Database: [SQLite](https://www.sqlite.org/index.html)
 4. SQLite tutorial for Noje.js: [tutorial](http://www.sqlitetutorial.net/sqlite-create-table/)
 4. Cron library: [node-cron](https://github.com/kelektiv/node-cron)
+5. Environmental variables: [dotenv](https://github.com/motdotla/dotenv)
 
 ### Development
-1. clone the repo
-2. Execute:
+1. Clone the repo
+2. Rename the file **.env_t** to **.env**. Define your telegram bot token in this file.
 ```javascript
-npm install
+TELEGRAM_TOKEN=YOUR_TOKEN_HERE
 ```
 3. Execute:
 ```javascript
+npm install
+```
+4. Execute:
+```javascript
 node index.js
 ```
-
+5. Try either the list of commands or just type **hi** and receive the answer from bot.
 
 ### Examples of usage
 Current list of commands:
-/addCron [40 * * * * * ] some schedules message here
-/getCrons
-/deleteCron [KO4]
-
-
+/add_cron [40 * * * * * ] some schedules message here
+/get_crons
+/delete_cron [KO4]
 
 ### TODO
 1. Better error handling
 2. Better API definition
-3. Better logging
-4. ...
+3. Better logging, write logging to files
+4. Better interaction, by keyboards
+5. ...
