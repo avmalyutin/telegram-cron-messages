@@ -1,5 +1,5 @@
+const logger = require("./logger_manager")("db_manager");
 const sqlite3 = require("sqlite3").verbose();
-
 const DATABASE_PATH = "./db/crons.db";
 let database;
 
@@ -8,16 +8,16 @@ let database;
  */
 exports.init = () => {
   return new Promise((resolve, reject) => {
-    console.log("+initDB");
+    logger.info("+initDB");
 
     const resultFun = err => {
       if (err) {
-        console.error("-initDB: error: " + err.message);
+        logger.error("-initDB: error: " + err.message);
         database = void 0;
-        return reject();
+        return reject(error);
       }
 
-      console.log("-initDB: Connection to database successfully established!");
+      logger.info("-initDB: Connection to database successfully established!");
 
       // check and create the table
 
@@ -39,7 +39,7 @@ exports.init = () => {
  */
 exports.getAllRecordsFromDB = () => {
   return new Promise((resolve, reject) => {
-    console.log("+getAllRecordsFromDB");
+    logger.info("+getAllRecordsFromDB");
 
     const sqlQuery = `SELECT
               CHAT_ID as chatId,
@@ -50,11 +50,11 @@ exports.getAllRecordsFromDB = () => {
 
     const resultFun = (err, rows) => {
       if (err) {
-        console.error("-getAllRecordsFromDB: error: " + err.message);
+        logger.error("-getAllRecordsFromDB: error: " + err.message);
         return reject();
       }
 
-      console.log("-getAllRecordsFromDB: rows: " + JSON.stringify(rows));
+      logger.info("-getAllRecordsFromDB: rows: " + JSON.stringify(rows));
       return resolve(rows.slice());
     };
 
@@ -68,7 +68,7 @@ exports.getAllRecordsFromDB = () => {
  */
 exports.getRecordsByChatId = chatId => {
   return new Promise((resolve, reject) => {
-    console.log("+getRecordsByChatId: " + chatId);
+    logger.info("+getRecordsByChatId: " + chatId);
 
     const sqlQuery = `SELECT
                 CHAT_ID as chatId,
@@ -80,11 +80,11 @@ exports.getRecordsByChatId = chatId => {
 
     const resultFun = (err, rows) => {
       if (err) {
-        console.error("-getRecordsByChatId: error:" + err.message);
+        logger.error("-getRecordsByChatId: error:" + err.message);
         return reject();
       }
 
-      console.log(
+      logger.info(
         "-getRecordsByChatId: rows retrieved: " + JSON.stringify(rows)
       );
       return resolve(rows.slice());
@@ -100,15 +100,15 @@ exports.getRecordsByChatId = chatId => {
  */
 exports.removeRecordByChatId = chatId => {
   return new Promise((resolve, reject) => {
-    console.log("+removeRecordByChatId: " + chatId);
+    logger.info("+removeRecordByChatId: " + chatId);
 
     var resultFunc = err => {
       if (err) {
-        console.error("-removeRecordByChatId: error:" + err.message);
+        logger.error("-removeRecordByChatId: error:" + err.message);
         return reject();
       }
 
-      console.log(
+      logger.info(
         "-removeRecordByChatId: successfully deleted for chatId: " + chatId
       );
 
@@ -129,15 +129,15 @@ exports.removeRecordByChatId = chatId => {
  */
 exports.removeRecordByEntryId = entryId => {
   return new Promise((resolve, reject) => {
-    console.log("+removeRecordByEntryId: " + entryId);
+    logger.info("+removeRecordByEntryId: " + entryId);
 
     var resultFunc = err => {
       if (err) {
-        console.error("-removeRecordByEntryId: error:" + err.message);
+        logger.error("-removeRecordByEntryId: error:" + err.message);
         return reject();
       }
 
-      console.log(
+      logger.info(
         "-removeRecordByEntryId: successfully deleted for entryId: " + entryId
       );
 
@@ -158,7 +158,7 @@ exports.removeRecordByEntryId = entryId => {
  */
 exports.addNewRecord = recordToAdd => {
   return new Promise((resolve, reject) => {
-    console.log("+addNewRecord: " + JSON.stringify(recordToAdd));
+    logger.info("+addNewRecord: " + JSON.stringify(recordToAdd));
 
     const sqlQuery = `INSERT INTO CRON_MESSAGES(CHAT_ID, ENTRY_ID, CRON_EXPRESSION, MESSAGE)
           VALUES (?,?,?,?)`;
@@ -172,11 +172,11 @@ exports.addNewRecord = recordToAdd => {
 
     const resultFun = err => {
       if (err) {
-        console.error("-addNewRecord: error:" + err.message);
+        logger.error("-addNewRecord: error:" + err.message);
         return reject();
       }
 
-      console.log("+addNewRecord: row has been inserted!");
+      logger.info("+addNewRecord: row has been inserted!");
       return resolve();
     };
 

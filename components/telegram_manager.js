@@ -1,28 +1,24 @@
-/** This will handle telegram functionality */
+const logger = require("./logger_manager")("telegram_manager");
 require('dotenv').config();
 const Telegraf = require("telegraf");
 const cronManager = require("./cron_manager");
 
-const db_manager = require("./db_manager");
-
 var TELEGRAM_TOKEN;
 var bot;
 
-var currenCronMessages = {};
-
 exports.init = () => {
-  console.log("tele_manager: +init");
+  logger.info("tele_manager: +init");
   registerBot();
   cronManager.registerBotLink(bot);
   cronManager.registerCronsByStartup();
-  console.log("tele_manager: -init");
+  logger.info("tele_manager: -init");
 };
 
 function registerBot() {
 
   try {
     TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
-    console.log("TELEGRAM_TOKEN is: " + TELEGRAM_TOKEN);
+    logger.info("TELEGRAM_TOKEN is: " + TELEGRAM_TOKEN);
     bot = new Telegraf(TELEGRAM_TOKEN);
     bot.start(ctx => ctx.reply("Welcome to the cron messagers bot!"));
     bot.command("/add_cron", ctx => addCronMessage(ctx));
@@ -32,18 +28,18 @@ function registerBot() {
     bot.hears("hi", ctx => ctx.reply("Hey there"));
     bot.startPolling();
   } catch (e) {
-    console.log("Error registring the the telegram bot -> exit with code 225");
-    console.log(e);
+    logger.info("Error registring the the telegram bot -> exit with code 225");
+    logger.info(e);
     process.exit(225);
   }
 
 }
 
 function addCronMessage(ctx) {
-  console.log("+addCronMessage: " + JSON.stringify(ctx.message));
+  logger.info("+addCronMessage: " + JSON.stringify(ctx.message));
 
   var messageRegisteredSuccess = reply => {
-    console.log(
+    logger.info(
       "addCronMessage: message registered: " +
       JSON.stringify(ctx.message)
     );
@@ -51,12 +47,12 @@ function addCronMessage(ctx) {
   };
 
   var messageRegisteredError = error => {
-    console.log(
+    logger.info(
       "addCronMessage: message not registered: " +
       JSON.stringify(ctx.message)
     );
-    console.log("I am here: " + error);
-    console.log(error);
+    logger.info("I am here: " + error);
+    logger.info(error);
     ctx.reply("error by registering the message");
   };
 
@@ -71,10 +67,10 @@ function deleteCronMessage(ctx) {
 }
 
 function getRegisteredCronMessages(ctx) {
-  console.log("+getRegisteredCronMessages");
+  logger.info("+getRegisteredCronMessages");
 
   var getMessagesSuccess = messages => {
-    console.log(
+    logger.info(
       "getRegisteredCronMessages: getMessagesSuccess: " +
       JSON.stringify(messages)
     );
@@ -96,7 +92,7 @@ function getRegisteredCronMessages(ctx) {
   };
 
   var getMessagesError = error => {
-    console.log(
+    logger.info(
       "getMessagesError: error by registering the message: "
     );
     ctx.reply("error by retrieving all messages");

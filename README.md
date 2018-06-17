@@ -6,14 +6,20 @@ This bot has been created to fire messages by cron expressions. Currently, the c
 
 The one special thing about bot is that all cron messages are registered in database. Therefore, if the server will be restarted, then the existing cron messages will be registered again.
 
+###Useful links
+1. Telegram Bot API: [Link](https://core.telegram.org/bots)
+2. Cron editor: TODO
+
 ### Used technologies
 The bot is written in JavaScript:
 1. Server: [Node.js](https://nodejs.org/en/)
 2. Telegram bot api library: [Telegraf](https://telegraf.js.org/#/)
 3. Database: [SQLite](https://www.sqlite.org/index.html)
 4. SQLite tutorial for Noje.js: [tutorial](http://www.sqlitetutorial.net/sqlite-create-table/)
-4. Cron library: [node-cron](https://github.com/kelektiv/node-cron)
-5. Environmental variables: [dotenv](https://github.com/motdotla/dotenv)
+5. Cron library: [node-cron](https://github.com/kelektiv/node-cron)
+6. Environmental variables: [dotenv](https://github.com/motdotla/dotenv)
+7. Logging framework: [winston](https://github.com/winstonjs/winston)
+8. Winston plugin for rotating log files per day: [winston-daily-rotate-file](https://github.com/winstonjs/winston-daily-rotate-file)
 
 ### Development
 1. Clone the repo
@@ -40,6 +46,5 @@ Current list of commands:
 ### TODO
 1. Better error handling
 2. Better API definition
-3. Better logging, write logging to files
-4. Better interaction, by keyboards
-5. ...
+3. Better interaction, by keyboards
+4. ...

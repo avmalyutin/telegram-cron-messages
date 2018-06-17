@@ -1,6 +1,5 @@
-/** This manager will handle the cron expressions */
+const logger = require("./logger_manager")("cron_manager");
 const CronJob = require("cron").CronJob;
-
 const db_manager = require("./db_manager");
 
 var bot;
@@ -15,11 +14,11 @@ exports.registerCronsByStartup = () => {
 
   return new Promise((resolve, reject) => {
 
-    console.log("+registerCronsByStartup");
+    logger.info("+registerCronsByStartup");
 
     db_manager.getAllRecordsFromDB().then(function (elems) {
 
-      console.log("+getAllRecordsFromDB: " + JSON.stringify(elems));
+      logger.info("+getAllRecordsFromDB: " + JSON.stringify(elems));
 
       elems.forEach(function (elem) {
 
@@ -40,20 +39,14 @@ exports.registerCronsByStartup = () => {
         job.start();
 
       });
-
-
-      console.log("+getAllRecordsFromDB");
-
-
+      logger.info("+getAllRecordsFromDB");
     });
-
-
   });
 };
 
 exports.registerCronMessage = function (telegramContext) {
   return new Promise((resolve, reject) => {
-    console.log(
+    logger.info(
       "+registerCronMessage: context message is: " +
       JSON.stringify(telegramContext.message)
     );
@@ -61,12 +54,12 @@ exports.registerCronMessage = function (telegramContext) {
     // get text
     var text = telegramContext.message.text;
 
-    console.log("registerCronMessage: the message text is:" + text);
+    logger.info("registerCronMessage: the message text is:" + text);
 
     var obj = validateAndParseTelegramMessage(text);
 
     if (typeof obj === "undefined") {
-      console.log("The format of message is not valid");
+      logger.info("The format of message is not valid");
       reject("not valid format of message");
     }
 
@@ -76,10 +69,9 @@ exports.registerCronMessage = function (telegramContext) {
 
     var chatId = telegramContext.message.chat.id;
 
-    console.log("Start registering the cron...");
+    logger.info("Start registering the cron...");
 
     var success = function (elementAdded) {
-      console.log("I am here 1");
 
       var job = new CronJob(obj.cron, function () {
         bot.telegram.sendMessage(chatId, obj.message);
@@ -97,7 +89,7 @@ exports.registerCronMessage = function (telegramContext) {
 
       job.start();
 
-      console.log("Cron is registered!");
+      logger.info("Cron is registered!");
 
       resolve();
     };
@@ -107,13 +99,13 @@ exports.registerCronMessage = function (telegramContext) {
 };
 
 var validateAndParseTelegramMessage = messageBody => {
-  console.log("+validateAndParseTelegramMessage: " + messageBody);
+  logger.info("+validateAndParseTelegramMessage: " + messageBody);
 
   var firstBracketIdx = messageBody.indexOf("[");
   var secondBracketIdx = messageBody.indexOf("]");
 
   if (firstBracketIdx === -1 || secondBracketIdx === -1) {
-    console.log(
+    logger.info(
       "-validateAndParseTelegramMessage: not valid message: firstBracketIdx: " +
       firstBracketIdx +
       " and secondBracketIdx: " +
@@ -122,38 +114,38 @@ var validateAndParseTelegramMessage = messageBody => {
     return void 0;
   }
 
-  console.log(
+  logger.info(
     "validateAndParseTelegramMessage: firstBracketIdx: " + firstBracketIdx
   );
-  console.log(
+  logger.info(
     "validateAndParseTelegramMessage: secondBracketIdx: " + secondBracketIdx
   );
 
   var cron = messageBody.slice(firstBracketIdx + 1, secondBracketIdx);
   var message = messageBody.slice(secondBracketIdx + 1);
 
-  console.log("validateAndParseTelegramMessage: cron is: (" + cron + ")");
+  logger.info("validateAndParseTelegramMessage: cron is: (" + cron + ")");
 
-  console.log("validateAndParseTelegramMessage: message is: (" + message + ")");
+  logger.info("validateAndParseTelegramMessage: message is: (" + message + ")");
 
   var obj = {
     cron: cron,
     message: message
   };
 
-  console.log("+validateAndParseTelegramMessage:");
+  logger.info("+validateAndParseTelegramMessage:");
   return obj;
 };
 
 
 var validateAndParseDeleteMessage = messageBody => {
-  console.log("+validateAndParseDeleteMessage: " + messageBody);
+  logger.info("+validateAndParseDeleteMessage: " + messageBody);
 
   var firstBracketIdx = messageBody.indexOf("[");
   var secondBracketIdx = messageBody.indexOf("]");
 
   if (firstBracketIdx === -1 || secondBracketIdx === -1) {
-    console.log(
+    logger.info(
       "-validateAndParseDeleteMessage: not valid message: firstBracketIdx: " +
       firstBracketIdx +
       " and secondBracketIdx: " +
@@ -162,10 +154,10 @@ var validateAndParseDeleteMessage = messageBody => {
     return void 0;
   }
 
-  console.log(
+  logger.info(
     "validateAndParseDeleteMessage: firstBracketIdx: " + firstBracketIdx
   );
-  console.log(
+  logger.info(
     "validateAndParseDeleteMessage: secondBracketIdx: " + secondBracketIdx
   );
 
@@ -177,18 +169,18 @@ var validateAndParseDeleteMessage = messageBody => {
 
 var addCronToDababase = (chatId, obj) => {
   return new Promise((resolve, reject) => {
-    console.log(
+    logger.info(
       "+addCronToDababase: " + chatId + " and obj is: " + JSON.stringify(obj)
     );
 
     var successGet = messages => {
-      console.log("addCronToDababase: successGet: " + JSON.stringify(messages));
+      logger.info("addCronToDababase: successGet: " + JSON.stringify(messages));
 
       var ids = messages.map(elem => {
         return elem.entry_id;
       });
 
-      console.log("addCronToDababase: successGet: ids: " + JSON.stringify(ids));
+      logger.info("addCronToDababase: successGet: ids: " + JSON.stringify(ids));
 
       var newId;
 
@@ -204,7 +196,7 @@ var addCronToDababase = (chatId, obj) => {
       };
 
       var addSuccess = () => {
-        console.log("addCronToDababase: addSuccess:");
+        logger.info("addCronToDababase: addSuccess:");
         resolve(elemToAdd);
       };
 
@@ -237,7 +229,7 @@ exports.getRegisteredCronMessages = () => {
 
 exports.removeRegisteredMessage = (ctx) => {
 
-  console.log(
+  logger.info(
     "+removeRegisteredMessage: context message is: " +
     JSON.stringify(ctx.message)
   );
@@ -245,12 +237,12 @@ exports.removeRegisteredMessage = (ctx) => {
   // get text
   var text = ctx.message.text;
 
-  console.log("removeRegisteredMessage: the message text is:" + text);
+  logger.info("removeRegisteredMessage: the message text is:" + text);
 
   var obj = validateAndParseDeleteMessage(text);
 
   if (typeof obj === "undefined") {
-    console.log("removeRegisteredMessage: The format of message is not valid");
+    logger.info("removeRegisteredMessage: The format of message is not valid");
     return;
   }
 
@@ -260,19 +252,19 @@ exports.removeRegisteredMessage = (ctx) => {
 
   var chatId = ctx.message.chat.id;
 
-  console.log("Start removing the cron: chatId: " + chatId + " and obj: " + obj);
+  logger.info("Start removing the cron: chatId: " + chatId + " and obj: " + obj);
 
 
   db_manager.removeRecordByEntryId(obj).then(function () {
 
     var arrayOfJobs = jobsMapByChatId[chatId + ""];
 
-    console.log("Array of jobs size: " + arrayOfJobs.length);
+    logger.info("Array of jobs size: " + arrayOfJobs.length);
 
-    console.log("The list of keys: " + JSON.stringify(Object.keys(jobsMapByChatId)));
+    logger.info("The list of keys: " + JSON.stringify(Object.keys(jobsMapByChatId)));
 
     var filteredElem = arrayOfJobs.filter(function (el) {
-      console.log("entryid: " + el + " and obj " + obj);
+      logger.info("entryid: " + el + " and obj " + obj);
       return el.entryId === obj;
     });
 
